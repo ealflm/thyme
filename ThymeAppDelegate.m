@@ -215,14 +215,14 @@
 
 - (void)updateStatusBar {
     if ([self.stopwatch isStopped]) {
-        [statusItem setLength:NSVariableStatusItemLength];
+        [statusItem setLength:16];
         [statusItem setTitle:@""];
         
         NSImage *logo = [NSImage imageNamed:@"logo_small"];
         [logo setTemplate:YES];
         [statusItem setImage: logo];
     } else {
-        [statusItem setLength:NSVariableStatusItemLength];
+        [statusItem setLength:[self.stopwatch value] > 3600 ? 62.0 : 36.0];
         [statusItem setTitle:[self.stopwatch description]];
         [statusItem setImage:nil];
     }
@@ -498,7 +498,7 @@
     self.stopwatch = [[Stopwatch alloc] initWithDelegate:self];
     
     NSStatusBar *statusBar = [NSStatusBar systemStatusBar];
-    self.statusItem = [statusBar statusItemWithLength:NSVariableStatusItemLength];
+    self.statusItem = [statusBar statusItemWithLength:36.0];
     [statusItem setHighlightMode:YES];
     [statusItem setMenu:menu];
     
