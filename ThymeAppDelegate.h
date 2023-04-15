@@ -10,7 +10,6 @@
 #import "DDHotKeyCenter.h"
 #import "Stopwatch.h"
 #import "PreferencesWindowController.h"
-#import "TagWindowController.h"
 
 @interface ThymeAppDelegate : NSObject <NSApplicationDelegate, GrowlApplicationBridgeDelegate, StopwatchDelegate>
 {
@@ -29,7 +28,6 @@
     NSMenuItem *finishItem;
     
     PreferencesWindowController *preferencesWindowController;
-    TagWindowController *tagWindowController;
     
     NSMenuItem *sessionsMenuSeparator;
     NSMenuItem *sessionsMenuExportItem;
@@ -56,16 +54,11 @@
 @property(nonatomic, retain) IBOutlet NSMenuItem *finishItem;
 
 @property(nonatomic, retain) PreferencesWindowController *preferencesWindowController;
-@property(nonatomic, retain) TagWindowController *tagWindowController;
 
 @property(nonatomic, retain) NSMenuItem *sessionsMenuSeparator;
 @property(nonatomic, retain) NSMenuItem *sessionsMenuExportItem;
 @property(nonatomic, retain) NSMenuItem *sessionsMenuClearItem;
 @property(nonatomic, retain) NSMutableArray *sessionsMenuItems;
-
-@property(nonatomic) NSTimeInterval lastStopWatchValue;
-
-@property(nonatomic, retain) NSString *currentTag;
 
 - (void)export;
 

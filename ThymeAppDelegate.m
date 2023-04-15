@@ -21,7 +21,7 @@
 - (void)notifyPauseWithDescription:(NSString*)description;
 - (void)notifyStopWithDescription:(NSString*)description;
 
-- (void)save:(NSTimeInterval)value : (NSString*)tag;
+- (void)save:(NSTimeInterval)value;
 
 - (void)updateStatusBar;
 - (void)clearSessionsFromMenu;
@@ -29,7 +29,6 @@
 
 - (IBAction)clear:(id)sender;
 - (IBAction)saveAction:(id)sender;
-- (IBAction)okButtonAction:(id)sender;
 @end
 
 
@@ -44,12 +43,10 @@
 @synthesize restartItem;
 @synthesize finishItem;
 @synthesize preferencesWindowController;
-@synthesize tagWindowController;
 @synthesize sessionsMenuSeparator;
 @synthesize sessionsMenuExportItem;
 @synthesize sessionsMenuClearItem;
 @synthesize sessionsMenuItems;
-@synthesize lastStopWatchValue;
 
 #pragma mark Controller
 
@@ -112,22 +109,6 @@
         [restartItem setEnabled:NO];
         [finishItem setEnabled:NO];
         
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"askForTagOnFinishButton"]) {
-            //Show tag window
-            if (self.tagWindowController == nil) {
-                TagWindowController* pwc = [[TagWindowController alloc] initWithWindowNibName:@"TagWindowController"];
-                self.tagWindowController = pwc;
-                [pwc release];
-            }
-            
-            [self.tagWindowController showWindow:nil];
-        }
-        else{
-            [self save: lastStopWatchValue : @""];
-        }
-        
-        [NSApp activateIgnoringOtherApps:YES];
-        
         if (notification) {
             [self notifyPauseWithDescription:description];
         }
@@ -175,49 +156,16 @@
 
 #pragma mark Model
 
-- (void)save:(NSTimeInterval)value :(NSString*)tag {
-    
+- (void)save:(NSTimeInterval)value {
     long totalSeconds = (long) floor(value);
     long hours = totalSeconds / 3600;
     long minutes = (totalSeconds / 60) % 60;
     long seconds = totalSeconds % 60;
-    NSString* defaultTag = @"";
-    
-    if (tag && tag.length > 0)
-    {
-        defaultTag = tag;
-    }
-    
+
     if (totalSeconds > 0) {
-        Session *session = [Session sessionWithSeconds:seconds minutes:minutes hours:hours tag:defaultTag];
+        Session *session = [Session sessionWithSeconds:seconds minutes:minutes hours:hours];
         [self saveAction:self];
         [self addSessionToMenu:session];
-    }
-}
-
-- (IBAction)okButtonAction:(id)sender
-{
-    if([sender isKindOfClass:[NSButton class]]){
-        NSButton *button = (NSButton *)sender;
-        if([button.identifier  isEqual: @"tagWindowOkButton"]){
-            [self save: lastStopWatchValue : self.tagWindowController.tagField.stringValue];
-        }
-        if (self.tagWindowController) {
-            [self.tagWindowController close];
-        }
-    }
-}
-
-- (IBAction)cancelButtonAction:(id)sender
-{
-    if([sender isKindOfClass:[NSButton class]]){
-        NSButton *button = (NSButton *)sender;
-        if([button.identifier  isEqual: @"tagWindowCancelButton"]){
-            [self save: lastStopWatchValue : @""];
-            if (self.tagWindowController) {
-                [self.tagWindowController close];
-            }
-        }
     }
 }
 
@@ -267,14 +215,14 @@
 
 - (void)updateStatusBar {
     if ([self.stopwatch isStopped]) {
-        [statusItem setLength:26.0];
+        [statusItem setLength:NSVariableStatusItemLength];
         [statusItem setTitle:@""];
         
         NSImage *logo = [NSImage imageNamed:@"logo_small"];
         [logo setTemplate:YES];
         [statusItem setImage: logo];
     } else {
-        [statusItem setLength:[self.stopwatch value] > 3600 ? 72.0 : 46.0];
+        [statusItem setLength:NSVariableStatusItemLength];
         [statusItem setTitle:[self.stopwatch description]];
         [statusItem setImage:nil];
     }
@@ -349,7 +297,7 @@
 }
 
 - (void) didStop:(id)stopwatch withValue:(NSTimeInterval)value {
-    self.lastStopWatchValue = value;
+    [self save:value];
     [self updateStatusBar];
 }
 
@@ -550,7 +498,7 @@
     self.stopwatch = [[Stopwatch alloc] initWithDelegate:self];
     
     NSStatusBar *statusBar = [NSStatusBar systemStatusBar];
-    self.statusItem = [statusBar statusItemWithLength:46.0];
+    self.statusItem = [statusBar statusItemWithLength:NSVariableStatusItemLength];
     [statusItem setHighlightMode:YES];
     [statusItem setMenu:menu];
     
@@ -787,8 +735,6 @@
     [sessionsMenuExportItem release];
     [sessionsMenuClearItem release];
     [sessionsMenuItems release];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
 	
     [super dealloc];
 }

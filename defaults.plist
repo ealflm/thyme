@@ -6,7 +6,5 @@
 	<true/>
 	<key>pauseOnSleep</key>
 	<true/>
-	<key>askForTagOnFinish</key>
-	<false/>
 </dict>
 </plist>
