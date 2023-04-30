@@ -8,12 +8,17 @@
 #import "ThymeAppDelegate.h"
 #import "Session.h"
 #import "ShortcutRecorder/PTHotKey/PTKeyCodeTranslator.h"
+#import "TransparentView.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define KEYCODE_T 17
 #define KEYCODE_R 15
 #define ZERO_TIME (hours == 0 && minutes == 0 && seconds == 0)
 
 @interface ThymeAppDelegate(hidden)
+
+@property (weak) IBOutlet NSWindow *window;
+
 - (void)startTimer;
 - (void)resetTimer;
 
@@ -32,7 +37,10 @@
 @end
 
 
-@implementation ThymeAppDelegate
+@implementation ThymeAppDelegate {
+    NSWindow *overlayWindow;
+}
+
 
 @synthesize stopwatch;
 @synthesize hotKeyCenter;
@@ -213,6 +221,25 @@
     [NSApp activateIgnoringOtherApps:YES];
 }
 
+- (void)resizeOverlayWindowToFitText:(CGFloat)size {
+    CGFloat newWindowWidth = size;
+    CGFloat newWindowHeight = 50;
+    NSRect newWindowFrame = NSMakeRect(overlayWindow.frame.origin.x, overlayWindow.frame.origin.y, newWindowWidth, newWindowHeight);
+    [overlayWindow setFrame:newWindowFrame display:YES animate:NO];
+}
+
+- (void)centerLabelInOverlayWindow {
+    CGFloat labelWidth = self.stopwatchDescriptionLabel.frame.size.width;
+    CGFloat labelHeight = self.stopwatchDescriptionLabel.frame.size.height;
+    CGFloat windowWidth = overlayWindow.frame.size.width;
+    CGFloat windowHeight = overlayWindow.frame.size.height;
+    
+    CGFloat newLabelX = (windowWidth - labelWidth) / 2;
+    CGFloat newLabelY = (windowHeight - labelHeight * 1.25) / 2;
+    
+    self.stopwatchDescriptionLabel.frame = NSMakeRect(newLabelX, newLabelY, labelWidth, labelHeight);
+}
+
 - (void)updateStatusBar {
     if ([self.stopwatch isStopped]) {
         [statusItem setLength:16];
@@ -221,10 +248,22 @@
         NSImage *logo = [NSImage imageNamed:@"logo_small"];
         [logo setTemplate:YES];
         [statusItem setImage: logo];
+        
+        // Clear the label text when the stopwatch is stopped
+        [self.stopwatchDescriptionLabel setStringValue:@""];
     } else {
         [statusItem setLength:[self.stopwatch value] > 3600 ? 62.0 : 36.0];
         [statusItem setTitle:[self.stopwatch description]];
         [statusItem setImage:nil];
+        
+        // Update the label text with the stopwatch description
+        [self.stopwatchDescriptionLabel setStringValue:[self.stopwatch description]];
+        
+        // Resize the overlay window to fit the text and re-center the label
+        [self resizeOverlayWindowToFitText:[self.stopwatch value] > 3600 ? 145.0 : 100.0];
+        
+        // Center the label in the overlay window
+        [self centerLabelInOverlayWindow];
     }
 }
 
@@ -419,6 +458,20 @@
 
 #pragma mark NSApplication
 
+- (NSImage *)roundedMaskImageWithSize:(NSSize)size cornerRadius:(CGFloat)cornerRadius {
+    NSImage *maskImage = [[NSImage alloc] initWithSize:size];
+    [maskImage lockFocus];
+    
+    NSBezierPath *roundedRect = [NSBezierPath bezierPathWithRoundedRect:NSMakeRect(0, 0, size.width, size.height)
+                                                                xRadius:cornerRadius
+                                                                yRadius:cornerRadius];
+    [[NSColor blackColor] set];
+    [roundedRect fill];
+    
+    [maskImage unlockFocus];
+    return maskImage;
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     [window close];
@@ -511,6 +564,53 @@
     
     // Start controller
     [self resetWithNotification:NO];
+    
+    // Get the screen size
+    NSScreen *mainScreen = [NSScreen mainScreen];
+    NSRect screenFrame = mainScreen.frame;
+
+    // Set the overlay window's size
+    CGFloat overlayWidth = 100;
+    CGFloat overlayHeight = 50;
+
+    // Set the desired margin
+    CGFloat marginRight = 15;
+    CGFloat marginTop = 35;
+
+    // Calculate the position for the overlay window with the specified margins
+    NSRect overlayRect = NSMakeRect(screenFrame.size.width - overlayWidth - marginRight, screenFrame.size.height - overlayHeight - marginTop, overlayWidth, overlayHeight);
+
+    NSUInteger windowStyle = NSWindowStyleMaskBorderless; // Set the window style to borderless
+    overlayWindow = [[NSWindow alloc] initWithContentRect:overlayRect styleMask:windowStyle backing:NSBackingStoreBuffered defer:NO];
+
+    // Create a transparent view for the transparent background
+    TransparentView *visualEffectView = [[TransparentView alloc] initWithFrame:overlayWindow.contentView.bounds];
+    visualEffectView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    visualEffectView.blendingMode = NSVisualEffectBlendingModeBehindWindow;
+    visualEffectView.state = NSVisualEffectStateActive;
+    visualEffectView.material = NSVisualEffectMaterialDark;
+    [overlayWindow.contentView addSubview:visualEffectView];
+
+    // Make the window float above other windows
+    [overlayWindow setLevel:NSFloatingWindowLevel];
+    
+    // Set collection behavior to make the overlay window appear on all desktops and in full-screen mode
+    overlayWindow.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces | NSWindowCollectionBehaviorFullScreenAuxiliary;
+
+    // Show the overlay window
+    [overlayWindow makeKeyAndOrderFront:self];
+    
+    // Create a label to display the stopwatch description
+    self.stopwatchDescriptionLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(20, 20, 400, 40)]; // Increase the width
+    [self.stopwatchDescriptionLabel setBezeled:NO];
+    [self.stopwatchDescriptionLabel setDrawsBackground:NO];
+    [self.stopwatchDescriptionLabel setEditable:NO];
+    [self.stopwatchDescriptionLabel setSelectable:NO];
+    [self.stopwatchDescriptionLabel setAlignment:NSTextAlignmentCenter];
+    [self.stopwatchDescriptionLabel setTextColor:[NSColor whiteColor]];
+    [self.stopwatchDescriptionLabel setFont:[NSFont systemFontOfSize:24]]; // Increase the font size
+    [visualEffectView addSubview:self.stopwatchDescriptionLabel];
+    
 }
 
 /**

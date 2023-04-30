@@ -47,6 +47,8 @@
 
 @property(nonatomic, retain) IBOutlet NSWindow *window;
 
+@property (strong, nonatomic) NSTextField *stopwatchDescriptionLabel;
+
 @property(nonatomic, retain) NSStatusItem *statusItem;
 @property(nonatomic, retain) IBOutlet NSMenu *menu;
 @property(nonatomic, retain) IBOutlet NSMenuItem *startPauseItem;
