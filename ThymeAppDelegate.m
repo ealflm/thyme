@@ -458,20 +458,6 @@
 
 #pragma mark NSApplication
 
-- (NSImage *)roundedMaskImageWithSize:(NSSize)size cornerRadius:(CGFloat)cornerRadius {
-    NSImage *maskImage = [[NSImage alloc] initWithSize:size];
-    [maskImage lockFocus];
-    
-    NSBezierPath *roundedRect = [NSBezierPath bezierPathWithRoundedRect:NSMakeRect(0, 0, size.width, size.height)
-                                                                xRadius:cornerRadius
-                                                                yRadius:cornerRadius];
-    [[NSColor blackColor] set];
-    [roundedRect fill];
-    
-    [maskImage unlockFocus];
-    return maskImage;
-}
-
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     [window close];
