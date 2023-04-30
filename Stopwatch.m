@@ -9,7 +9,6 @@
 #import "Stopwatch.h"
 
 @interface Stopwatch ()
-@property (nonatomic, retain) NSTimer* timer;
 @property (nonatomic, retain) NSDate* reference;
 @property (nonatomic) NSTimeInterval accum;
 - (void) tick;
@@ -80,7 +79,16 @@
     
     self.reference = [NSDate date];
     
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(tick) userInfo:nil repeats:YES];
+    // Create a GCD timer
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+    if (self.timer) {
+        dispatch_source_set_timer(self.timer, DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC, 0.1 * NSEC_PER_SEC);
+        dispatch_source_set_event_handler(self.timer, ^{
+            [self performSelectorOnMainThread:@selector(tick) withObject:nil waitUntilDone:NO];
+        });
+        dispatch_resume(self.timer);
+    }
     
     if (self.delegate) {
         [self.delegate didStart:self];
@@ -95,8 +103,10 @@
     
     self.accum = [self value];
     
-    [self.timer invalidate];
-    self.timer = nil;
+    if (self.timer) {
+        dispatch_source_cancel(self.timer);
+        self.timer = nil;
+    }
     
     if (self.delegate) {
         [self.delegate didPause:self];
@@ -121,8 +131,10 @@
     
     self.accum = 0;
     
-    [self.timer invalidate];
-    self.timer = nil;
+    if (self.timer) {
+        dispatch_source_cancel(self.timer);
+        self.timer = nil;
+    }
     
     if (self.delegate) {
         [self.delegate didStop:self withValue:value];

@@ -9,7 +9,7 @@
 #import "Session.h"
 #import "ShortcutRecorder/PTHotKey/PTKeyCodeTranslator.h"
 #import "TransparentView.h"
-#import <QuartzCore/QuartzCore.h>
+#import <dispatch/dispatch.h>
 
 #define KEYCODE_T 17
 #define KEYCODE_R 15

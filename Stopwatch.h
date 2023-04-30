@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <dispatch/dispatch.h>
 
 // Delegate
 @protocol StopwatchDelegate <NSObject>
@@ -21,12 +22,13 @@
     id<StopwatchDelegate> delegate;
     
 @private
-    NSTimer* timer;
+    dispatch_source_t timer;
     NSDate* reference;
     NSTimeInterval accum;
 }
 
 @property (nonatomic, assign) id<StopwatchDelegate> delegate;
+@property (nonatomic, strong) dispatch_source_t timer;
 
 - (id) initWithDelegate:(id<StopwatchDelegate>)delegate;
 - (NSString*) description;
