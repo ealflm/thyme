@@ -278,11 +278,27 @@
     [NSApp activateIgnoringOtherApps:YES];
 }
 
-- (void)resizeOverlayWindowToFitText:(CGFloat)size {
-    CGFloat newWindowWidth = size;
-    CGFloat newWindowHeight = 50;
-    NSRect newWindowFrame = NSMakeRect(overlayWindow.frame.origin.x, overlayWindow.frame.origin.y, newWindowWidth, newWindowHeight);
-    [overlayWindow setFrame:newWindowFrame display:YES animate:NO];
+- (void)resizeOverlayWindowToFitText:(NSInteger)type {
+    // Set the overlay window's size
+    CGFloat overlayWidth = 100;
+    CGFloat overlayHeight = 50;
+    
+    if (type == 1) {
+        overlayWidth = 145;
+    }
+    
+    // Get the screen size
+    NSScreen *mainScreen = [NSScreen mainScreen];
+    NSRect screenFrame = mainScreen.frame;
+
+    // Set the desired margin
+    CGFloat marginRight = 16;
+    CGFloat marginTop = 42;
+
+    // Calculate the position for the overlay window with the specified margins
+    NSRect overlayRect = NSMakeRect(screenFrame.size.width - overlayWidth - marginRight, screenFrame.size.height - overlayHeight - marginTop, overlayWidth, overlayHeight);
+    
+    [overlayWindow setFrame:overlayRect display:YES animate:NO];
 }
 
 - (void)centerLabelInOverlayWindow {
@@ -307,7 +323,7 @@
         [statusItem setImage: logo];
         
         // Resize the overlay window to fit the text and re-center the label
-        [self resizeOverlayWindowToFitText:[self.stopwatch value] > 3600 ? 145.0 : 100.0];
+        [self resizeOverlayWindowToFitText:[self.stopwatch value] > 3600 ? 1 : 0];
         
         // Clear the label text when the stopwatch is stopped
         [self.stopwatchDescriptionLabel setStringValue:@"00:00"];
@@ -320,7 +336,7 @@
         [self.stopwatchDescriptionLabel setStringValue:[self.stopwatch description]];
         
         // Resize the overlay window to fit the text and re-center the label
-        [self resizeOverlayWindowToFitText:[self.stopwatch value] > 3600 ? 145.0 : 100.0];
+        [self resizeOverlayWindowToFitText:[self.stopwatch value] > 3600 ? 1 : 0];
         
         // Center the label in the overlay window
         [self centerLabelInOverlayWindow];
@@ -716,7 +732,7 @@
     visualEffectView.state = NSVisualEffectStateActive;
     visualEffectView.material = NSVisualEffectMaterialDark;
     visualEffectView.wantsLayer = YES;
-    visualEffectView.alphaValue = 0.65;
+    visualEffectView.alphaValue = 0.5;
     visualEffectView.layer.cornerRadius = 10.0;
     [overlayWindow.contentView addSubview:visualEffectView];
 
