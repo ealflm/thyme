@@ -249,8 +249,11 @@
         [logo setTemplate:YES];
         [statusItem setImage: logo];
         
+        // Resize the overlay window to fit the text and re-center the label
+        [self resizeOverlayWindowToFitText:[self.stopwatch value] > 3600 ? 145.0 : 100.0];
+        
         // Clear the label text when the stopwatch is stopped
-        [self.stopwatchDescriptionLabel setStringValue:@""];
+        [self.stopwatchDescriptionLabel setStringValue:@"00:00"];
     } else {
         [statusItem setLength:[self.stopwatch value] > 3600 ? 62.0 : 36.0];
         [statusItem setTitle:[self.stopwatch description]];
@@ -600,6 +603,10 @@
     [self.stopwatchDescriptionLabel setTextColor:[NSColor whiteColor]];
     [self.stopwatchDescriptionLabel setFont:[NSFont systemFontOfSize:24]]; // Increase the font size
     [visualEffectView addSubview:self.stopwatchDescriptionLabel];
+    
+    [self.stopwatchDescriptionLabel setStringValue:@"00:00"];
+    // Center the label in the overlay window
+    [self centerLabelInOverlayWindow];
     
 }
 
