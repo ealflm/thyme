@@ -568,6 +568,16 @@
         self.finishItem.keyEquivalent = [[PTKeyCodeTranslator currentTranslator] translateKeyCode:keyCode];
         self.finishItem.keyEquivalentModifierMask = modifierKeys;
     }
+    
+    // Export to Notion
+    if ((combo = [[NSUserDefaults standardUserDefaults] valueForKey:@"exportToNotion"]) != nil) {
+        keyCode = [[combo valueForKey:@"keyCode"] integerValue];
+        modifierKeys = [[combo valueForKey:@"modifierFlags"] unsignedIntegerValue];
+
+        [self.hotKeyCenter registerHotKeyWithKeyCode:keyCode modifierFlags:modifierKeys target:self action:@selector(exportToNotion:) object:nil];
+        self.sessionsMenuExportToNotionItem.keyEquivalent = [[PTKeyCodeTranslator currentTranslator] translateKeyCode:keyCode];
+        self.sessionsMenuExportToNotionItem.keyEquivalentModifierMask = modifierKeys;
+    }
 }
 
 #pragma mark Sleep/Wake

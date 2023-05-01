@@ -14,6 +14,7 @@
     SRRecorderControl *startPauseShortcutRecorder;
     SRRecorderControl *restartShortcutRecorder;
     SRRecorderControl *finishShortcutRecorder;
+    SRRecorderControl *exportToNotionShortcutRecorder;
     NSButton *pauseOnSleepButton;
     NSButton *pauseOnScreensaverButton;
 }
@@ -22,6 +23,7 @@
 @property (nonatomic, retain) IBOutlet SRRecorderControl *startPauseShortcutRecorder;
 @property (nonatomic, retain) IBOutlet SRRecorderControl *restartShortcutRecorder;
 @property (nonatomic, retain) IBOutlet SRRecorderControl *finishShortcutRecorder;
+@property (nonatomic, retain) IBOutlet SRRecorderControl *exportToNotionShortcutRecorder;
 @property (nonatomic, retain) IBOutlet NSButton *pauseOnSleepButton;
 @property (nonatomic, retain) IBOutlet NSButton *pauseOnScreensaverButton;
 
