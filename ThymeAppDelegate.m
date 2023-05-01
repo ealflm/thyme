@@ -5,6 +5,9 @@
 //  Created by João Moreno on 2/8/10.
 //
 
+#import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
+
 #import "ThymeAppDelegate.h"
 #import "Session.h"
 #import "ShortcutRecorder/PTHotKey/PTKeyCodeTranslator.h"
@@ -15,7 +18,7 @@
 #define KEYCODE_R 15
 #define ZERO_TIME (hours == 0 && minutes == 0 && seconds == 0)
 
-@interface ThymeAppDelegate(hidden)
+@interface ThymeAppDelegate(hidden) <NSUserNotificationCenterDelegate>
 
 @property (weak) IBOutlet NSWindow *window;
 
@@ -323,8 +326,60 @@
     [jsonString release];
 }
 
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification {
+    return YES;
+}
+
+- (void)sendNotificationWithTitle:(NSString *)title informativeText:(NSString *)informativeText {
+    NSUserNotification *notification = [[NSUserNotification alloc] init];
+    notification.title = title;
+    notification.informativeText = informativeText;
+    notification.soundName = NSUserNotificationDefaultSoundName;
+
+    NSUserNotificationCenter *center = [NSUserNotificationCenter defaultUserNotificationCenter];
+    center.delegate = self;
+    [center deliverNotification:notification];
+}
+
 - (void)exportToNotion:(id)sender {
-    NSLog(@"Hello world");
+    NSError *error;
+
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[Session allSessionsAsDictionaries]
+                                                       options:0
+                                                         error:&error];
+
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+
+    NSURL *url = [NSURL URLWithString:@"https://ealflm-n8n.herokuapp.com/webhook/thyme"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPBody:jsonData];
+
+    NSURLSession *session = [NSURLSession sharedSession];
+
+    [self sendNotificationWithTitle:@"Import Started" informativeText:@"Importing to Notion"];
+
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+        NSInteger statusCode = httpResponse.statusCode;
+
+        if (error) {
+            NSLog(@"Error: %@", error.localizedDescription);
+            [self sendNotificationWithTitle:@"Import Failed" informativeText:error.localizedDescription];
+        } else if (statusCode != 200) {
+            NSLog(@"Error: Status Code %ld", (long)statusCode);
+            NSString *informativeText = [NSString stringWithFormat:@"Import failed with status code %ld", (long)statusCode];
+            [self sendNotificationWithTitle:@"Import Failed" informativeText:informativeText];
+        } else {
+            NSLog(@"Success: %@", response);
+            [self sendNotificationWithTitle:@"Import Succeeded" informativeText:@"Data imported successfully!"];
+        }
+    }];
+
+    [task resume];
+
+    [jsonString release];
 }
 
 #pragma mark Hot Key Handlers
