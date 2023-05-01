@@ -11,7 +11,6 @@
 #import "ThymeAppDelegate.h"
 #import "Session.h"
 #import "ShortcutRecorder/PTHotKey/PTKeyCodeTranslator.h"
-#import "TransparentView.h"
 #import <dispatch/dispatch.h>
 
 #define KEYCODE_T 17
@@ -662,17 +661,19 @@
     NSUInteger windowStyle = NSWindowStyleMaskBorderless; // Set the window style to borderless
     overlayWindow = [[NSWindow alloc] initWithContentRect:overlayRect styleMask:windowStyle backing:NSBackingStoreBuffered defer:NO];
     [overlayWindow setBackgroundColor:[NSColor clearColor]];
+    [overlayWindow setIgnoresMouseEvents:YES];
     
-    // Create a transparent view for the transparent background
-    TransparentView *visualEffectView = [[TransparentView alloc] initWithFrame:overlayWindow.contentView.bounds];
+    // Create a visual effect view for the transparent background
+    NSVisualEffectView *visualEffectView = [[NSVisualEffectView alloc] initWithFrame:overlayWindow.contentView.bounds];
     visualEffectView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
     visualEffectView.blendingMode = NSVisualEffectBlendingModeBehindWindow;
     visualEffectView.state = NSVisualEffectStateActive;
     visualEffectView.material = NSVisualEffectMaterialDark;
-    visualEffectView.wantsLayer = YES; // Add this line
+    visualEffectView.wantsLayer = YES;
     visualEffectView.alphaValue = 0.65;
-    visualEffectView.layer.cornerRadius = 10.0; // Add this line
+    visualEffectView.layer.cornerRadius = 10.0;
     [overlayWindow.contentView addSubview:visualEffectView];
+
 
     // Make the window float above other windows
     [overlayWindow setLevel:NSFloatingWindowLevel];
