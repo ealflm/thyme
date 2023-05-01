@@ -67,9 +67,9 @@
 
 - (void)export;
 
-- (void)hideOverlay:(Boolean)notification;
-- (void)showOverlay:(Boolean)notification;
-- (void)toggleOverlay:(Boolean)notification;
+- (void)hideOverlay;
+- (void)showOverlay;
+- (void)toggleOverlay;
 
 - (void)startWithNotification:(Boolean)notification;
 - (void)pauseWithNotification:(Boolean)notification;

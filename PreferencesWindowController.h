@@ -10,6 +10,7 @@
 #import "ShortcutRecorder/ShortcutRecorder.h"
 
 @interface PreferencesWindowController : NSWindowController <SRRecorderControlDelegate> {
+    SRRecorderControl *hideShowOverlayRecorder;
     SRRecorderControl *startPauseShortcutRecorder;
     SRRecorderControl *restartShortcutRecorder;
     SRRecorderControl *finishShortcutRecorder;
@@ -17,6 +18,7 @@
     NSButton *pauseOnScreensaverButton;
 }
 
+@property (nonatomic, retain) IBOutlet SRRecorderControl *hideShowOverlayRecorder;
 @property (nonatomic, retain) IBOutlet SRRecorderControl *startPauseShortcutRecorder;
 @property (nonatomic, retain) IBOutlet SRRecorderControl *restartShortcutRecorder;
 @property (nonatomic, retain) IBOutlet SRRecorderControl *finishShortcutRecorder;

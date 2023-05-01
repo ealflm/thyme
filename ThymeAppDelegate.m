@@ -414,6 +414,11 @@
 
 #pragma mark Hot Key Handlers
 
+- (void)hideShowOverlay
+{
+    [self toggleOverlay];
+}
+
 - (void)startTimer
 {
     if (self.preferencesWindowController != nil && [[self.preferencesWindowController window] isVisible]) {
@@ -516,6 +521,16 @@
         [self.hotKeyCenter registerHotKeyWithKeyCode:keyCode modifierFlags:modifierKeys target:self action:@selector(startTimer) object:nil];
         self.startPauseItem.keyEquivalent = [[PTKeyCodeTranslator currentTranslator] translateKeyCode:keyCode];
         self.startPauseItem.keyEquivalentModifierMask = modifierKeys;
+    }
+    
+    // Hide and show overlay
+    if ((combo = [[NSUserDefaults standardUserDefaults] valueForKey:@"hideShowOverlay"]) != nil) {
+        keyCode = [[combo valueForKey:@"keyCode"] integerValue];
+        modifierKeys = [[combo valueForKey:@"modifierFlags"] unsignedIntegerValue];
+        
+        [self.hotKeyCenter registerHotKeyWithKeyCode:keyCode modifierFlags:modifierKeys target:self action:@selector(hideShowOverlay) object:nil];
+        self.hideShowOverlayItem.keyEquivalent = [[PTKeyCodeTranslator currentTranslator] translateKeyCode:keyCode];
+        self.hideShowOverlayItem.keyEquivalentModifierMask = modifierKeys;
     }
     
     // Restart
