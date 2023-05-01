@@ -653,8 +653,8 @@
     CGFloat overlayHeight = 50;
 
     // Set the desired margin
-    CGFloat marginRight = 15;
-    CGFloat marginTop = 35;
+    CGFloat marginRight = 16;
+    CGFloat marginTop = 42;
 
     // Calculate the position for the overlay window with the specified margins
     NSRect overlayRect = NSMakeRect(screenFrame.size.width - overlayWidth - marginRight, screenFrame.size.height - overlayHeight - marginTop, overlayWidth, overlayHeight);
