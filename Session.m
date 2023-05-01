@@ -30,8 +30,7 @@
     if (dateFormatter == nil)
     {
         dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
-        [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
+        [dateFormatter setDateFormat:@"dd/MM/yyyy 'at' HH:mm"];
     }
     
     return [dateFormatter stringFromDate:self.date];
@@ -91,7 +90,11 @@
 
 - (NSString*)stringRepresentation
 {
-    return [NSString stringWithFormat:@"%@ - %@", [self timeStringRepresentation], [self formatDate]];
+    if (self.taskName == nil || [self.taskName isEqualToString:@""]) {
+        return [NSString stringWithFormat:@"%@ - %@", [self timeStringRepresentation], [self formatDate]];
+    }
+    
+    return [NSString stringWithFormat:@"%@ - %@ - %@", [self timeStringRepresentation], [self formatDate], self.taskName];
 }
 
 - (NSDictionary*)asDictionary

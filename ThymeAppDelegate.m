@@ -171,7 +171,7 @@
     long hours = totalSeconds / 3600;
     long minutes = (totalSeconds / 60) % 60;
     long seconds = totalSeconds % 60;
-
+    
     if (totalSeconds > 0) {
         NSAlert *alert = [[NSAlert alloc] init];
         [alert setMessageText:@"Task Name"];
@@ -180,14 +180,18 @@
         NSTextField *inputTextField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 300, 26)];
         [inputTextField setStringValue:@""];
         [alert setAccessoryView:inputTextField];
-
+        
         // Set focus to the input text field
         [[alert window] setInitialFirstResponder:inputTextField];
-
+        
         NSInteger button = [alert runModal];
-        if (button == NSAlertFirstButtonReturn) {
+        if (button == NSAlertFirstButtonReturn || button == NSAlertSecondButtonReturn) {
             Session *session = [Session sessionWithSeconds:seconds minutes:minutes hours:hours];
-            session.taskName = [inputTextField stringValue];
+            
+            if ([inputTextField stringValue] != nil && [inputTextField stringValue].length > 0) {
+                session.taskName = [inputTextField stringValue];
+            }
+            
             [self saveAction:self];
             [self addSessionToMenu:session];
         }
