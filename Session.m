@@ -21,6 +21,7 @@
 @dynamic minutes;
 @dynamic seconds;
 @dynamic date;
+@dynamic taskName;
 
 - (NSString*)formatDate
 {
@@ -103,10 +104,14 @@
     NSNumber *duration = [NSNumber numberWithUnsignedInteger:[self.seconds unsignedIntegerValue]
         + (([self.minutes unsignedIntegerValue] + ([self.hours unsignedIntegerValue] * 60)) * 60)];
     
-    NSDictionary *result = [NSDictionary dictionaryWithObjectsAndKeys:
+    NSMutableDictionary *result = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                             [dateFormatter stringFromDate:self.date], @"date",
                             duration, @"duration",
                             nil];
+
+    if (self.taskName) {
+        [result setObject:self.taskName forKey:@"taskName"];
+    }
     
     [dateFormatter release];
     

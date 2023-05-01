@@ -173,9 +173,27 @@
     long seconds = totalSeconds % 60;
 
     if (totalSeconds > 0) {
-        Session *session = [Session sessionWithSeconds:seconds minutes:minutes hours:hours];
-        [self saveAction:self];
-        [self addSessionToMenu:session];
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setMessageText:@"Task Name"];
+        [alert addButtonWithTitle:@"OK"];
+        [alert addButtonWithTitle:@"Cancel"];
+        NSTextField *inputTextField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 200, 24)];
+        [inputTextField setStringValue:@""];
+        [alert setAccessoryView:inputTextField];
+
+        // Set focus to the input text field
+        [[alert window] setInitialFirstResponder:inputTextField];
+
+        NSInteger button = [alert runModal];
+        if (button == NSAlertFirstButtonReturn) {
+            Session *session = [Session sessionWithSeconds:seconds minutes:minutes hours:hours];
+            session.taskName = [inputTextField stringValue];
+            [self saveAction:self];
+            [self addSessionToMenu:session];
+        }
+
+        [inputTextField release];
+        [alert release];
     }
 }
 

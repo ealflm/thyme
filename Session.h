@@ -16,6 +16,7 @@
 @property (nonatomic, retain) NSNumber * minutes;
 @property (nonatomic, retain) NSNumber * seconds;
 @property (nonatomic, retain) NSDate * date;
+@property (nonatomic, retain) NSString * taskName;
 
 + (NSArray*)allSessions;
 + (NSArray*)allSessionsAsDictionaries;
