@@ -50,6 +50,7 @@
 @synthesize window;
 @synthesize menu;
 @synthesize startPauseItem;
+@synthesize hideShowOverlayItem;
 @synthesize restartItem;
 @synthesize finishItem;
 @synthesize preferencesWindowController;
@@ -59,6 +60,31 @@
 @synthesize sessionsMenuItems;
 
 #pragma mark Controller
+
+- (void)showOverlay
+{
+    if ([[self.hideShowOverlayItem title] isEqualToString:@"Show overlay"]) {
+        [hideShowOverlayItem setTitle:@"Hide overlay"];
+        [overlayWindow makeKeyAndOrderFront:self];
+    }
+}
+
+- (void)hideOverlay
+{
+    if ([[self.hideShowOverlayItem title] isEqualToString:@"Hide overlay"]) {
+        [hideShowOverlayItem setTitle:@"Show overlay"];
+        [overlayWindow orderOut:self];
+    }
+}
+
+- (void)toggleOverlay
+{
+    if ([[self.hideShowOverlayItem title] isEqualToString:@"Show overlay"]) {
+        [self showOverlay];
+    } else {
+        [self hideOverlay];
+    }
+}
 
 - (void)startWithNotification:(Boolean)notification
 {
@@ -151,13 +177,13 @@
 {
     if ([self.sessionsMenuItems count] == 0)
     {
-        [menu insertItem:self.sessionsMenuSeparator atIndex:3];
-        [menu insertItem:self.sessionsMenuExportItem atIndex:4];
-        [menu insertItem:self.sessionsMenuExportToNotionItem atIndex:5];
-        [menu insertItem:self.sessionsMenuClearItem atIndex:6];
+        [menu insertItem:self.sessionsMenuSeparator atIndex:4];
+        [menu insertItem:self.sessionsMenuExportItem atIndex:5];
+        [menu insertItem:self.sessionsMenuExportToNotionItem atIndex:6];
+        [menu insertItem:self.sessionsMenuClearItem atIndex:7];
     }
     
-    NSInteger index = 6 + [self.sessionsMenuItems count];
+    NSInteger index = 7 + [self.sessionsMenuItems count];
     
     NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[session stringRepresentation] action:@selector(lol) keyEquivalent:@""];
     [item setEnabled:NO];
@@ -218,6 +244,11 @@
 - (IBAction)onFinishClick:(id)sender
 {
     [self resetWithNotification:NO];
+}
+
+- (IBAction)onHideShowOverlayClick:(id)sender
+{
+    [self toggleOverlay];
 }
 
 - (IBAction)clear:(id)sender

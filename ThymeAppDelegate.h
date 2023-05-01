@@ -26,6 +26,7 @@
     NSMenu *menu;
     NSMenuItem *startPauseItem;
     NSMenuItem *finishItem;
+    NSMenuItem *hideShowOverlayItem;
     
     PreferencesWindowController *preferencesWindowController;
     
@@ -52,6 +53,7 @@
 @property(nonatomic, retain) NSStatusItem *statusItem;
 @property(nonatomic, retain) IBOutlet NSMenu *menu;
 @property(nonatomic, retain) IBOutlet NSMenuItem *startPauseItem;
+@property(nonatomic, retain) IBOutlet NSMenuItem *hideShowOverlayItem;
 @property(nonatomic, retain) IBOutlet NSMenuItem *restartItem;
 @property(nonatomic, retain) IBOutlet NSMenuItem *finishItem;
 
@@ -64,6 +66,10 @@
 @property(nonatomic, retain) NSMutableArray *sessionsMenuItems;
 
 - (void)export;
+
+- (void)hideOverlay:(Boolean)notification;
+- (void)showOverlay:(Boolean)notification;
+- (void)toggleOverlay:(Boolean)notification;
 
 - (void)startWithNotification:(Boolean)notification;
 - (void)pauseWithNotification:(Boolean)notification;

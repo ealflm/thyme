@@ -32,6 +32,12 @@
                         <action selector="onFinishClick:" target="494" id="573"/>
                     </connections>
                 </menuItem>
+                <menuItem title="Hide overlay" id="jZi-Hw-u2g">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onHideShowOverlayClick:" target="494" id="gqb-mE-4zm"/>
+                    </connections>
+                </menuItem>
                 <menuItem isSeparatorItem="YES" id="143">
                     <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                 </menuItem>
@@ -71,6 +77,7 @@
         <customObject id="494" customClass="ThymeAppDelegate">
             <connections>
                 <outlet property="finishItem" destination="533" id="575"/>
+                <outlet property="hideShowOverlayItem" destination="jZi-Hw-u2g" id="NZQ-5Q-deO"/>
                 <outlet property="menu" destination="57" id="534"/>
                 <outlet property="restartItem" destination="587" id="589"/>
                 <outlet property="startPauseItem" destination="129" id="574"/>
