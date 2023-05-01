@@ -60,6 +60,7 @@
 @property(nonatomic, retain) NSMenuItem *sessionsMenuSeparator;
 @property(nonatomic, retain) NSMenuItem *sessionsMenuExportItem;
 @property(nonatomic, retain) NSMenuItem *sessionsMenuClearItem;
+@property(nonatomic, retain) NSMenuItem *sessionsMenuExportToNotionItem;
 @property(nonatomic, retain) NSMutableArray *sessionsMenuItems;
 
 - (void)export;
@@ -76,5 +77,7 @@
 - (IBAction)onFinishClick:(id)sender;
 - (IBAction)onPreferencesClick:(id)sender;
 - (IBAction)onAboutClick:(id)sender;
+
+- (void)exportToNotion:(id)sender;
 
 @end

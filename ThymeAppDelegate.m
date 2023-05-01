@@ -135,6 +135,7 @@
 {
     [menu removeItem:self.sessionsMenuSeparator];
     [menu removeItem:self.sessionsMenuExportItem];
+    [menu removeItem:self.sessionsMenuExportToNotionItem];
     [menu removeItem:self.sessionsMenuClearItem];
     
     for (NSMenuItem *item in self.sessionsMenuItems) {
@@ -150,10 +151,11 @@
     {
         [menu insertItem:self.sessionsMenuSeparator atIndex:3];
         [menu insertItem:self.sessionsMenuExportItem atIndex:4];
-        [menu insertItem:self.sessionsMenuClearItem atIndex:5];
+        [menu insertItem:self.sessionsMenuExportToNotionItem atIndex:5];
+        [menu insertItem:self.sessionsMenuClearItem atIndex:6];
     }
     
-    NSInteger index = 4 + [self.sessionsMenuItems count];
+    NSInteger index = 6 + [self.sessionsMenuItems count];
     
     NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[session stringRepresentation] action:@selector(lol) keyEquivalent:@""];
     [item setEnabled:NO];
@@ -297,6 +299,10 @@
     }
     
     [jsonString release];
+}
+
+- (void)exportToNotion:(id)sender {
+    NSLog(@"Hello world");
 }
 
 #pragma mark Hot Key Handlers
@@ -536,6 +542,10 @@
     NSMenuItem *exportMenuItem = [[NSMenuItem alloc] initWithTitle:@"Export..." action:@selector(export) keyEquivalent:@""];
     self.sessionsMenuExportItem = exportMenuItem;
     [exportMenuItem release];
+    
+    NSMenuItem *exportToNotionMenuItem = [[NSMenuItem alloc] initWithTitle:@"Export to Notion" action:@selector(exportToNotion:) keyEquivalent:@""];
+    self.sessionsMenuExportToNotionItem = exportToNotionMenuItem;
+    [exportToNotionMenuItem release];
     
     self.stopwatch = [[Stopwatch alloc] initWithDelegate:self];
     
