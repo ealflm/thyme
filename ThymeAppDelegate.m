@@ -568,13 +568,17 @@
 
     NSUInteger windowStyle = NSWindowStyleMaskBorderless; // Set the window style to borderless
     overlayWindow = [[NSWindow alloc] initWithContentRect:overlayRect styleMask:windowStyle backing:NSBackingStoreBuffered defer:NO];
-
+    [overlayWindow setBackgroundColor:[NSColor clearColor]];
+    
     // Create a transparent view for the transparent background
     TransparentView *visualEffectView = [[TransparentView alloc] initWithFrame:overlayWindow.contentView.bounds];
     visualEffectView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
     visualEffectView.blendingMode = NSVisualEffectBlendingModeBehindWindow;
     visualEffectView.state = NSVisualEffectStateActive;
     visualEffectView.material = NSVisualEffectMaterialDark;
+    visualEffectView.wantsLayer = YES; // Add this line
+    visualEffectView.alphaValue = 0.65;
+    visualEffectView.layer.cornerRadius = 10.0; // Add this line
     [overlayWindow.contentView addSubview:visualEffectView];
 
     // Make the window float above other windows
