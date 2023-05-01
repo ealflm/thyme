@@ -177,7 +177,7 @@
         [alert setMessageText:@"Task Name"];
         [alert addButtonWithTitle:@"OK"];
         [alert addButtonWithTitle:@"Cancel"];
-        NSTextField *inputTextField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 200, 24)];
+        NSTextField *inputTextField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 300, 26)];
         [inputTextField setStringValue:@""];
         [alert setAccessoryView:inputTextField];
 
@@ -345,6 +345,9 @@
 
 - (void)resetTimer
 {
+    // Bring the app to the foreground
+    [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
+    
     if (self.preferencesWindowController != nil && [[self.preferencesWindowController window] isVisible]) {
         return;
     }
